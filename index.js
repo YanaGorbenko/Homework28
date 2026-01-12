@@ -162,24 +162,68 @@ function showAddBookForm() {
   submitButton.textContent = 'Відправити';
   form.appendChild(submitButton);
 
+  const clearErrors = () => {
+    const errors = form.querySelectorAll('.error-message');
+    errors.forEach(error => error.remove());
+  };
+
   form.addEventListener('submit', event => {
     event.preventDefault();
+    clearErrors(); // Очищаємо старі помилки
 
-    const newId =
-      books.length > 0 ? Math.max(...books.map(book => book.id)) + 1 : 1;
+    let isValid = true;
+    if (!titleInput.value.trim()) {
+      const errorMesageTitle = document.createElement('p');
+      errorMesageTitle.textContent = 'Назва книги має бути введена';
+      errorMesageTitle.className = 'error-message';
+      form.insertBefore(errorMesageTitle, titleInput);
+      isValid = false;
+    }
+    if (!authorInput.value.trim()) {
+      const errorMesageAuthor = document.createElement('p');
+      errorMesageAuthor.textContent = 'Автор книги має бути введений';
+      errorMesageAuthor.className = 'error-message';
+      form.insertBefore(errorMesageAuthor, authorInput);
+      isValid = false;
+    }
+    const yearValue = yearInput.value.trim();
+    if (!yearValue) {
+      const errorMessageYear = document.createElement('p');
+      errorMessageYear.textContent = 'Рік видання книги має бути введений';
+      errorMessageYear.className = 'error-message';
+      form.insertBefore(errorMessageYear, yearInput);
+      isValid = false;
+    } else if (isNaN(yearValue) || !Number.isInteger(Number(yearValue))) {
+      const errorMessageYear = document.createElement('p');
+      errorMessageYear.textContent = 'Рік видання має бути числом';
+      errorMessageYear.className = 'error-message';
+      form.insertBefore(errorMessageYear, yearInput);
+      isValid = false;
+    }
+    if (!descriptionInput.value.trim()) {
+      const errorMesageDescription = document.createElement('p');
+      errorMesageDescription.textContent = 'Опис книги має бути введений';
+      errorMesageDescription.className = 'error-message';
+      form.insertBefore(errorMesageDescription, descriptionInput);
+      isValid = false;
+    }
+    if (isValid) {
+      const newId =
+        books.length > 0 ? Math.max(...books.map(book => book.id)) + 1 : 1;
 
-    const newBook = {
-      id: newId,
-      title: titleInput.value.trim(),
-      author: authorInput.value.trim(),
-      year: parseInt(yearInput.value),
-      description: descriptionInput.value.trim(),
-    };
+      const newBook = {
+        id: newId,
+        title: titleInput.value.trim(),
+        author: authorInput.value.trim(),
+        year: parseInt(yearInput.value),
+        description: descriptionInput.value.trim(),
+      };
 
-    books.push(newBook);
+      books.push(newBook);
 
-    renderBookList();
-    message();
+      renderBookList();
+      message();
+    }
   });
 }
 
